@@ -1,5 +1,8 @@
 import os
+from dotenv import load_dotenv
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+load_dotenv()
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 MCP_SERVER_URL = "http://localhost:8003"

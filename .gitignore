@@ -1,0 +1,67 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# -------------------------
+# Virtual Environment
+# -------------------------
+venv/
+.env/
+.venv/
+
+# -------------------------
+# Environment Variables (API Keys)
+# -------------------------
+.env
+config.py
+
+# -------------------------
+# OS Files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+
+# -------------------------
+# Jupyter Notebook
+# -------------------------
+.ipynb_checkpoints
+
+# -------------------------
+# Output files
+# -------------------------
+output.csv
+evaluation_results.csv
+
+# -------------------------
+# MCP / Embedding Models
+# (these are huge and shouldn't go to GitHub)
+# -------------------------
+embedding_model/
+storage/
+
+# -------------------------
+# Python build files
+# -------------------------
+build/
+dist/
+*.egg-info/
+
+# -------------------------
+# VS Code
+# -------------------------
+.vscode/
+
+# -------------------------
+# PyCharm
+# -------------------------
+.idea/

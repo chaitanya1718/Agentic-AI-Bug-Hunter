@@ -1,0 +1,27 @@
+ID,Bug Line,Explanation
+2,3,"The bug is that the ""mA"" symbol in the code is likely a literal string, whereas it should be denoting milliamperes, implying use of a decimal point to correctly represent numbers in the format."
+3,4,"The bug is likely due to incorrect syntax, as the line of code with the number (4) is too long and is missing a closing parenthesis to match the opening one, causing a syntax error."
+4,3,"The bug is that the pin ""m_rMcd.sP_LIN"" has its current range set to 5 uA, which is too low considering the voltage range of 30 V applied to the same pin, causing potential damage."
+9,3,"The bug is that `rdi.cogo().end()` is called twice, which may cause unexpected termination of the cogo function."
+10,2,"The bug at line 2 is likely a non-ASCII character (static vs staticstatic), causing the issue."
+11,2,"The bug line 2 has a typo, using ""iForce"" instead of ""vForce"", which is the correct function to set a voltage force."
+13,3,"The bug at line 3 is misspelled function names, where ""getVesjkctor"" should be ""getVector"", ""getVslkhalue"" should be ""getValue"", and ""getWlkjnaveform"" should be ""getForm""."
+14,7,"The bug on line 7 is getting a burst value from the wrong function, `getAlarmValue()` should be `getBurstValue()`."
+16,1,"The bug line 1 has an extra `.execute()` call without updating the offset in the subsequent `writeData()` method, causing potential data overlap."
+17,8,"The bug is that a call to `rdi.emap().FFV(10)` is used but in the code the related function `rdi.id().getFFV()` is called to get the first fail vector. This suggests that `rdi.id().getFFV()` should be replaced with `rdi.emap(""a"").getFFV()`."
+20,1,"The bug is that the pin ""DATA1"" is set to mode ""PAR"" with ""digCap()"", but it initially cannot be set to both modes ""SER"" and ""PAR"", violating the stated limitation."
+22,3,"The bug is that the ""02"" parameter is not passed to the readTempThresh() function when it is called."
+23,25,"The bug is that the read data bit length (readData(8,12)) exceeds the number of bits in an 8-bit register, but the code still tries to get the read data."
+24,3,"The bug line is incomplete because the statement was cut off with a semicolon, likely intending to call the 'interSamp()' or similar method to specify the sampling interval."
+25,1,"The bug on line 1 is attempting to define a variable named ""Array I write_data"" with an incorrect format.
+
+However if that is the corrected part you are referring to from the document I will format it in a new line for you below.
+
+
+
+Changed `ARRAY_I write_data(2);` to `ARRAY_I write_data[2];`"
+26,3,"The bug lies in trying to add ""wav2"" three times when it has already been added once as part of waveform ""wav1"" for Pin1, resulting in an undefined sequence for measurement."
+27,2,"The bug is on line 2, where the voltage range is set to 0.01 V on signals ""DPS_1,DPS_2"" which might not be suitable for the actual measurement."
+29,4,"The bug at line 4 is that the pin status of ""P0x08F1"" is retrieved after setting the status of other pins, potentially resulting in inconsistent or outdated information."
+31,2,The software bug is a null pointer exception or an out-of-bounds error when accessing `vec_port2` before it has been initialized.
+32,2,The bug is a duplicate `burst()` call on an already bursted function.
