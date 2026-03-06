@@ -1,0 +1,82 @@
+import asyncio
+import os
+import streamlit as st
+from pydantic import BaseModel, Field
+from pydantic_ai import Agent, RunContext
+from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.providers.openai import OpenAIProvider
+from openai import AsyncOpenAI
+from mcp.client.sse import sse_client
+from mcp import ClientSession
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class a(BaseModel):
+    b: list[str] = Field(description="List of Infineon API calls")
+
+class c(BaseModel):
+    d: int = Field(alias="Bug Line")
+    e: str = Field(alias="Explanation")
+
+z0 = AsyncOpenAI(
+    base_url='https://router.huggingface.co/v1',
+    api_key=os.getenv('HF_API_KEY')
+)
+
+z1 = OpenAIChatModel(
+    'Qwen/Qwen2.5-Coder-32B-Instruct',
+    provider=OpenAIProvider(openai_client=z0)
+)
+
+f = Agent(z1, output_type=a, system_prompt="Extract key Infineon API calls and variables from the C++ code. Return as a list of strings.")
+g = Agent(z1, system_prompt="You are a researcher. Use the search_documents tool to look up rules for the provided API calls. Return a detailed summary of the rules.")
+h = Agent(z1, output_type=c, system_prompt="You are a validator. Compare the C++ code against the provided rules. Find the exact integer line number of the bug and explain it based on the rules.")
+
+class i:
+    def __init__(self, j: ClientSession):
+        self.j = j
+
+@g.tool
+async def search_documents(k: RunContext[i], l: str) -> str:
+    m = await k.deps.j.call_tool("search_documents", arguments={"query": l})
+    return str(m.content)
+
+async def n(o):
+    p = "http://127.0.0.1:8003/sse"
+    async with sse_client(p) as q:
+        async with ClientSession(q[0], q[1]) as r:
+            await r.initialize()
+            s = i(r)
+            
+            t = f"Analyze this C++ code and extract Infineon API calls:\n{o}"
+            u = await f.run(t)
+            v = u.output.b
+            
+            w = f"Find documentation for these APIs: {', '.join(v)}"
+            x = await g.run(w, deps=s)
+            y = x.output
+            
+            z = '\n'.join(f"{idx+1}: {line}" for idx, line in enumerate(o.split('\n')))
+            aa = f"Code with line numbers:\n{z}\n\nRules from Manual:\n{y}\n\nFind the bug, output exact integer line number and explanation."
+            ab = await h.run(aa)
+            
+            return ab.output.d, ab.output.e
+
+st.set_page_config(page_title="Agentic AI Bug Hunter", layout="wide")
+st.title("Infineon Agentic AI Bug Hunter")
+
+ac = st.text_area("Paste C++ Code Here", height=300)
+
+if st.button("Detect Bug"):
+    if ac:
+        with st.spinner("Agents are analyzing code and querying MCP Server..."):
+            try:
+                ad, ae = asyncio.run(n(ac))
+                st.success("Bug Detected Successfully!")
+                st.metric(label="Detected Bug Line", value=ad)
+                st.info(ae)
+            except Exception as exc:
+                st.error(f"Error: {exc}")
+    else:
+        st.warning("Please paste some code first.")

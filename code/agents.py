@@ -5,40 +5,47 @@ from pydantic_ai import Agent
 # Load environment variables
 load_dotenv()
 
-# Ensure API key is available
+# Ensure GROQ key exists
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
+MODEL = "groq:llama-3.1-8b-instant"
 
-
-# Agent 1 — Code Analyzer
+# Agent 1 – Code Analyzer
 code_analyzer = Agent(
-    "groq:llama-3.1-8b-instant",
+    MODEL,
     system_prompt="""
-You analyze code snippets and detect suspicious lines.
+You analyze C++ test code using Infineon RDI APIs.
 
-Return possible bug lines as a list of line numbers.
+Your job:
+Identify suspicious lines where a bug might exist.
+
+Return line numbers only.
+Example:
+5
+or
+3,4
 """
 )
 
-
-# Agent 2 — Bug Detector
-bug_detector = Agent(
-    "groq:llama-3.1-8b-instant",
+# Agent 2 – Bug Locator
+bug_locator = Agent(
+    MODEL,
     system_prompt="""
-You detect the exact buggy line in code.
+You detect the exact bug line.
 
-You will receive candidate bug lines.
-Analyze the code carefully and return the exact buggy line number.
+You will receive:
+- Code snippet
+- Candidate bug lines
+- Documentation retrieved from Infineon manual
 
-Return ONLY the line number.
+Return ONLY the final bug line number.
 """
 )
 
-
-# Agent 3 — Explanation Generator
+# Agent 3 – Explanation Agent
 explanation_agent = Agent(
-    "groq:llama-3.1-8b-instant",
+    MODEL,
     system_prompt="""
-Explain software bugs in ONE short sentence.
+Explain the bug in ONE short sentence.
 
 Format:
 Changed <wrong code> to <correct code>.

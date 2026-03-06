@@ -1,50 +1,59 @@
-from agents import explanation_agent
+from agents import code_analyzer, bug_locator, explanation_agent
 from mcp_client import search_docs
 
 
-# Detect bug line using diff between Code and Correct Code
-def find_bug_line(code, correct_code):
-
-    code_lines = code.split("\n")
-    correct_lines = correct_code.split("\n")
-
-    for i in range(min(len(code_lines), len(correct_lines))):
-        if code_lines[i] != correct_lines[i]:
-            return i + 1
-
-    return "Unknown"
-
-
-# Limit code size to avoid token overflow
 def shorten_code(code, max_lines=40):
-
     lines = code.split("\n")
     return "\n".join(lines[:max_lines])
 
 
 def detect_bug(code, correct_code):
 
-    # shorten code
     code = shorten_code(code)
 
-    # detect bug line without LLM
-    bug_line = find_bug_line(code, correct_code)
+    # Agent 1: Analyze code
+    analyzer_prompt = f"""
+Analyze this C++ test code and find suspicious lines.
 
-    # retrieve documentation from MCP
-    query = f"Explain bug in this code: {code}"
+Code:
+{code}
+"""
+
+    candidate_lines = code_analyzer.run_sync(analyzer_prompt).output
+
+    # Retrieve documentation using MCP
+    query = f"Infineon RDI bug patterns related to these lines: {candidate_lines}"
     context = search_docs(query)
 
-    explanation_prompt = f"""
+    # Agent 2: Detect exact bug
+    bug_prompt = f"""
+Code:
+{code}
+
+Candidate lines:
+{candidate_lines}
+
 Documentation:
 {context}
 
+Find the exact buggy line.
+Return only the line number.
+"""
+
+    bug_line = bug_locator.run_sync(bug_prompt).output
+
+    # Agent 3: Explanation
+    explanation_prompt = f"""
 Code:
 {code}
 
 Bug line:
 {bug_line}
 
-Explain the bug in one short sentence.
+Documentation:
+{context}
+
+Explain the bug briefly.
 """
 
     explanation = explanation_agent.run_sync(explanation_prompt).output
