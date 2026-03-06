@@ -1,0 +1,4 @@
+pydantic-ai
+fastmcp
+pandas
+openai
